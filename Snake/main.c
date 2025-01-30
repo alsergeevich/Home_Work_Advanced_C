@@ -15,7 +15,7 @@ typedef struct {
 } Point;
 
 typedef struct {
-    Point body[WIDTH * HEIGHT]; //длина змейки максимальная - WIDTH * HEIGHT по идее никто не достигнет границ массива
+    Point body[WIDTH * HEIGHT]; //массив для координат сегментов тела змейки
     int length;
     int direction; // 0: UP, 1: RIGHT, 2: DOWN, 3: LEFT
 } Snake;
