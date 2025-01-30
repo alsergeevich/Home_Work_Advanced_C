@@ -1,0 +1,2 @@
+Компилировалось в системе Alt Linux 10.2
+Команда для компиляции: gcc -o snake main.c -lncurses
