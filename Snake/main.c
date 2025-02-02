@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include <ctype.h>
+
 
 #define WIDTH 30
 #define HEIGHT 20
@@ -15,7 +17,7 @@ typedef struct {
 } Point;
 
 typedef struct {
-    Point body[WIDTH * HEIGHT]; //массив для координат сегментов тела змейки
+    Point body[WIDTH * HEIGHT]; //длина змейки максимальная - WIDTH * HEIGHT по идее никто не достигнет границ массива
     int length;
     int direction; // 0: UP, 1: RIGHT, 2: DOWN, 3: LEFT
 } Snake;
@@ -122,17 +124,24 @@ void draw(Snake *snake, Point *food) {
 
 void input(Snake *snake ) {
     int key = getch();
+    if(isalpha(key)) { //проверяем, если нажата буквенная клавиша
+        key = tolower(key); //преобразуем в нижний регистр
+    }
     switch (key) {
-        case KEY_UP:
+        case KEY_UP: //стрелка или 'w'
+        case 'w':
             if (snake->direction != 2) snake->direction = 0;
             break;
-        case KEY_RIGHT:
+        case KEY_RIGHT: //стрелка или 'd'
+        case 'd':
             if (snake->direction != 3) snake->direction = 1;
             break;
-        case KEY_DOWN:
+        case KEY_DOWN: //стрелка или 's'
+        case 's':
             if (snake->direction != 0) snake->direction = 2;
             break;
-        case KEY_LEFT:
+        case KEY_LEFT: //стрелка или 'a'
+        case 'a':
             if (snake->direction != 1) snake->direction = 3;
             break;
         case KEY_F(10):
