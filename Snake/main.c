@@ -10,6 +10,14 @@
 #define INITIAL_LENGTH 3
 #define MAX_COUNT_LIVES 3
 
+typedef enum { //цвета для змейки
+   RED = 1,
+   GREEN,
+   YELLOW,
+   WHITE,
+   BLUE,
+} colors_t;
+
 
 typedef struct {
     int x;
@@ -33,7 +41,7 @@ int count_food = 0;
 int game_over = 0;
 int speed_game = 100000;
 int zone_comforta = 10;
-
+colors_t color_snake = WHITE;//устанавливаем цвет по умолчанию белый
 
 int main() {
     Snake snake;
@@ -59,6 +67,7 @@ int main() {
         if (collision(&snake)) {
             game_over++;
             snake.length = INITIAL_LENGTH;
+            color_snake = WHITE;
             snake.direction = 1;
             if(game_over < MAX_COUNT_LIVES) { //чтобы в конце не сбросилось количество очков
                 count_food = 0;
@@ -92,6 +101,15 @@ void init() {
     curs_set(0); // Скрыть курсор
     srand(time(NULL)); // Инициализация генератора случайных чисел
     timeout(100); // Установка таймера для получения ввода
+
+    start_color(); // Инициализация цветов
+
+    init_pair(RED, COLOR_RED, COLOR_BLACK);
+    init_pair(GREEN, COLOR_GREEN, COLOR_BLACK);
+    init_pair(YELLOW, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(WHITE, COLOR_WHITE, COLOR_BLACK);
+    init_pair(BLUE, COLOR_BLUE, COLOR_BLACK);
+
 }
 
 void draw(Snake *snake, Point *food) {
@@ -110,11 +128,21 @@ void draw(Snake *snake, Point *food) {
         mvprintw(i, WIDTH + 1, "#");
     }
 
-    // Рисуем змейку
+    // Рисуем змейку, цвет зависит от количества съеденной еды
+    switch (count_food) {
+
+        case 2: color_snake = YELLOW; break; //2 еды желтый
+        case 4: color_snake = GREEN; break; //4 еды зеленый
+        case 8: color_snake = BLUE; break; //8 еды синий
+        case 10: color_snake = RED; break; //10 еды красный
+
+    }
+    attron(COLOR_PAIR(color_snake)); //применяем цвет
     mvprintw(snake->body[0].y + 1, snake->body[0].x + 1, "@");
     for (int i = 1; i < snake->length; i++) {
         mvprintw(snake->body[i].y + 1, snake->body[i].x + 1, "O");
     }
+    attroff(COLOR_PAIR(color_snake));//отключаем цвет, чтобы всё остальное не красилось
 
     // Рисуем еду
     mvprintw(food->y + 1, food->x + 1, "*");
@@ -128,19 +156,19 @@ void input(Snake *snake ) {
         key = tolower(key); //преобразуем в нижний регистр
     }
     switch (key) {
-        case KEY_UP: //стрелка или 'w'
+        case KEY_UP:
         case 'w':
             if (snake->direction != 2) snake->direction = 0;
             break;
-        case KEY_RIGHT: //стрелка или 'd'
+        case KEY_RIGHT:
         case 'd':
             if (snake->direction != 3) snake->direction = 1;
             break;
-        case KEY_DOWN: //стрелка или 's'
+        case KEY_DOWN:
         case 's':
             if (snake->direction != 0) snake->direction = 2;
             break;
-        case KEY_LEFT: //стрелка или 'a'
+        case KEY_LEFT:
         case 'a':
             if (snake->direction != 1) snake->direction = 3;
             break;
